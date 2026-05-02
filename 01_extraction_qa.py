@@ -4,25 +4,25 @@ file_path = "data_raw/salesdaily.csv"
 
 
 def process_pharma_sales(file_path):
-    print("Iniciando pipeline ETL: Extraccion y transformacion")
+    print("Starting ETL pipeline: Extraction and transformation")
 
-    # 1. Extraccion
+    # 1. Extraction
     try:
         df = pd.read_csv(file_path)
-        print(f"Archivo cargado. Filas originales: {len(df)}")
+        print(f"File loaded. Original rows: {len(df)}")
     except FileNotFoundError:
-        print("Error: Archivo no encontrado.")
+        print("Error: File not found.")
 
-    # 2. Transformacion estructural (unipivot/melt)
-    print("Tranformando formato ancho a largo (unipivot)...")
+    # 2. Structural transformation (unpivot/melt)
+    print("Transforming from wide to long format (unpivot)...")
 
-    # Columnas que no son medicamentos (variables de contexto)
+    # Non-medication columns (context variables)
     id_vars = ["datum", "Year", "Month", "Hour", "Weekday Name"]
 
-    # Columnas que si son medicamentos y les aplicaremos melt
+    # Medication columns to apply melt
     value_vars = ["M01AB", "M01AE", "N02BA", "N02BE", "N05B", "N05C", "R03", "R06"]
 
-    # Aplicamos melt
+    # Apply melt
     df_long = pd.melt(
         df,
         id_vars=id_vars,
@@ -31,11 +31,11 @@ def process_pharma_sales(file_path):
         value_name="cantidad_vendida",
     )
 
-    # 3. Limpieza y QA en el nuevo formato
+    # 3. Cleaning and QA in the new format
     audit_log = []
     initial_rows = len(df_long)
 
-    # Renombramos columnas para estandarizar
+    # Rename columns to standardize
     df_long = df_long.rename(
         columns={
             "datum": "fecha",
@@ -46,32 +46,32 @@ def process_pharma_sales(file_path):
         }
     )
 
-    # QA: Verificar si hay ventas negativas (anomalia)
+    # QA: Check for negative sales (anomaly)
     ventas_negativas = len(df_long[df_long["cantidad_vendida"] < 0])
     if ventas_negativas > 0:
         df_long = df_long[df_long["cantidad_vendida"] >= 0]
         audit_log.append(
-            f"Se eliminaron {ventas_negativas} registros con ventas negativas (posible error de sistema)."
+            f"Removed {ventas_negativas} records with negative sales (possible system error)."
         )
 
-    # QA: Formatear fecha correctamente
+    # QA: Format date correctly
     df_long["fecha"] = pd.to_datetime(df_long["fecha"], errors="coerce")
     fechas_nulas = df_long["fecha"].isnull().sum()
     if fechas_nulas > 0:
         df_long = df_long.dropna(subset=["fecha"])
         audit_log.append(
-            f"Se eliminaron {fechas_nulas} registros con formato de fecha inválido."
+            f"Removed {fechas_nulas} records with invalid date format."
         )
 
     final_rows = len(df_long)
 
-    # Reporte
-    print("\nReporte de audiroria QA:")
-    print(f"Estructura final: {df_long.shape[0]} filas, {df_long.shape[1]} columnas")
+    # Report
+    print("\nQA Audit Report:")
+    print(f"Final structure: {df_long.shape[0]} rows, {df_long.shape[1]} columns")
     if not audit_log:
-        print("- Los datos no presentaron anomalias criticas en esta validacion")
+        print("- Data showed no critical anomalies in this validation")
     for log in audit_log:
         print(f"- {log}")
-    print(f"Porcentaje de retencion: {round((final_rows / initial_rows) * 100, 2)}")
+    print(f"Retention percentage: {round((final_rows / initial_rows) * 100, 2)}")
 
     return df_long
