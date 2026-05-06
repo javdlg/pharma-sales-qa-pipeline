@@ -4,7 +4,7 @@ import json
 import logging
 import os
 
-# Configurar logging
+# Configure logging
 os.makedirs("logs", exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
