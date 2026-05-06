@@ -99,9 +99,7 @@ if __name__ == "__main__":
     
     # Ensure the output directory exists
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    
     df_clean = process_pharma_sales(input_path)
-    
     # Save the clean file
     df_clean.to_csv(output_path, index=False)
     logging.info(f"Clean data saved to {output_path}")

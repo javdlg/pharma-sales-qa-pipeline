@@ -39,12 +39,10 @@ def run_pipeline():
     try:
         # Run transformation and QA
         df_clean = extraction_qa.process_pharma_sales(raw_path)
-        
         # Save the clean data to the staging/clean area
         os.makedirs(os.path.dirname(clean_path), exist_ok=True)
         df_clean.to_csv(clean_path, index=False)
         logging.info(f"Clean staging file generated at: {clean_path}")
-        
     except Exception as e:
         logging.error("Pipeline failed during Extraction & QA Phase. Aborting.", exc_info=True)
         return # Stop execution if Step 1 fails
