@@ -20,11 +20,11 @@ pharma-sales-qa-pipeline/
 │
 ├── data_raw/               # Original raw datasets (not tracked in git)
 ├── data_clean/             # Processed and validated datasets
-├── 01_extraction_qa.py     # Script for data extraction, unpivot, and QA logging
-└── README.md
+├── extraction_qa.py        # Script for data extraction, unpivot, and QA logging
+├── sql_load.py             # Script for database load
 ```
 
 ## How to Run
 - Ensure Python is installed.
 - Place the `salesdaily.csv` file in the `data_raw/` directory.
-- Run the script `python 01_extraction_qa.py`.
+- Run the pipeline with `python main.py`.
