@@ -1,20 +1,37 @@
 import pandas as pd
+import json
+import logging
+import os
 
-file_path = "data_raw/salesdaily.csv"
+# Configurar logging
+os.makedirs("logs", exist_ok=True)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler("logs/pipeline.log"),
+        logging.StreamHandler()
+    ]
+)
+
+# Cargar configuración
+with open("config.json", "r") as file:
+    config = json.load(file)
 
 
 def process_pharma_sales(file_path):
-    print("Starting ETL pipeline: Extraction and transformation")
+    logging.info("Starting ETL pipeline: Extraction and transformation")
 
     # 1. Extraction
     try:
         df = pd.read_csv(file_path)
-        print(f"File loaded. Original rows: {len(df)}")
-    except FileNotFoundError:
-        print("Error: File not found.")
+        logging.info(f"File loaded. Original rows: {len(df)}")
+    except FileNotFoundError as e:
+        logging.error("Error: File not found.", exc_info=True)
+        raise e
 
     # 2. Structural transformation (unpivot/melt)
-    print("Transforming from wide to long format (unpivot)...")
+    logging.info("Transforming from wide to long format (unpivot)...")
 
     # Non-medication columns (context variables)
     id_vars = ["datum", "Year", "Month", "Hour", "Weekday Name"]
@@ -66,12 +83,25 @@ def process_pharma_sales(file_path):
     final_rows = len(df_long)
 
     # Report
-    print("\nQA Audit Report:")
-    print(f"Final structure: {df_long.shape[0]} rows, {df_long.shape[1]} columns")
+    logging.info("QA Audit Report Summary:")
+    logging.info(f"Final structure: {df_long.shape[0]} rows, {df_long.shape[1]} columns")
     if not audit_log:
-        print("- Data showed no critical anomalies in this validation")
+        logging.info("Data showed no critical anomalies in this validation")
     for log in audit_log:
-        print(f"- {log}")
-    print(f"Retention percentage: {round((final_rows / initial_rows) * 100, 2)}")
+        logging.warning(log)
+    logging.info(f"Retention percentage: {round((final_rows / initial_rows) * 100, 2)}%")
 
     return df_long
+
+if __name__ == "__main__":
+    input_path = config["paths"]["raw_data"]
+    output_path = config["paths"]["clean_data"]
+    
+    # Asegurar que el directorio de salida exista
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    
+    df_clean = process_pharma_sales(input_path)
+    
+    # Guardar el archivo limpio
+    df_clean.to_csv(output_path, index=False)
+    logging.info(f"Clean data saved to {output_path}")
