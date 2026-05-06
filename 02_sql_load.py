@@ -15,7 +15,7 @@ logging.basicConfig(
     ]
 )
 
-# Cargar configuración
+# Load configuration
 with open("config.json", "r") as file:
     config = json.load(file)
 
