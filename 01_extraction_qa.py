@@ -3,7 +3,7 @@ import json
 import logging
 import os
 
-# Configurar logging
+# Configure logging
 os.makedirs("logs", exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
@@ -14,7 +14,7 @@ logging.basicConfig(
     ]
 )
 
-# Cargar configuración
+# Load configuration
 with open("config.json", "r") as file:
     config = json.load(file)
 
@@ -97,11 +97,11 @@ if __name__ == "__main__":
     input_path = config["paths"]["raw_data"]
     output_path = config["paths"]["clean_data"]
     
-    # Asegurar que el directorio de salida exista
+    # Ensure the output directory exists
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     
     df_clean = process_pharma_sales(input_path)
     
-    # Guardar el archivo limpio
+    # Save the clean file
     df_clean.to_csv(output_path, index=False)
     logging.info(f"Clean data saved to {output_path}")
