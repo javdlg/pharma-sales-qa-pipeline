@@ -1,0 +1,26 @@
+2026-05-07 16:31:05,263 - INFO - ==================================================
+2026-05-07 16:31:05,264 - INFO - STARTING MASTER PIPELINE EXECUTION
+2026-05-07 16:31:05,264 - INFO - ==================================================
+2026-05-07 16:31:05,264 - INFO - Configuration loaded successfully.
+2026-05-07 16:31:05,264 - INFO - --- Phase 1: Extraction & QA ---
+2026-05-07 16:31:05,264 - INFO - Starting ETL pipeline: Extraction and transformation
+2026-05-07 16:31:05,297 - INFO - File loaded. Original rows: 2106
+2026-05-07 16:31:05,297 - INFO - Transforming from wide to long format (unpivot)...
+2026-05-07 16:31:05,376 - INFO - QA Rejections Report generated at: logs/qa_rejections.csv
+2026-05-07 16:31:05,377 - INFO - QA Summary JSON generated at: logs/qa_summary.json
+2026-05-07 16:31:05,378 - INFO - QA Audit Report Summary:
+2026-05-07 16:31:05,378 - INFO - Final structure: 16624 rows, 7 columns
+2026-05-07 16:31:05,378 - WARNING - Removed 224 records identified as statistical outliers.
+2026-05-07 16:31:05,378 - INFO - Retention percentage: 98.67%
+2026-05-07 16:31:05,417 - INFO - Clean staging file generated at: data_clean/salesdaily_clean.csv
+2026-05-07 16:31:05,417 - INFO - --- Phase 2: SQL Database Load ---
+2026-05-07 16:31:05,418 - INFO - Initializing loading process...
+2026-05-07 16:31:05,436 - INFO - Clean data read (16624 rows).
+2026-05-07 16:31:05,486 - INFO - Writing data to the 'daily_sales' table...
+2026-05-07 16:31:05,544 - INFO - Data successfully inserted into the 'pharma_sales.db' database.
+2026-05-07 16:31:05,544 - INFO - Load QA: The 'daily_sales' table has 16624 stored records.
+2026-05-07 16:31:05,545 - INFO - Database connection closed safely.
+2026-05-07 16:31:05,545 - INFO - --------------------------------------------------
+2026-05-07 16:31:05,545 - INFO - ==================================================
+2026-05-07 16:31:05,545 - INFO - MASTER PIPELINE COMPLETED SUCCESSFULLY
+2026-05-07 16:31:05,545 - INFO - ==================================================
