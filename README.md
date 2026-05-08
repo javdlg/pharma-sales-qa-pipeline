@@ -82,4 +82,4 @@ The [sql_analytics.sql](file:///c:/Users/javie/Documents/practice-projects/pharm
 2. Place the `salesdaily.csv` file in the `data_raw/` directory.
 3. Run the ETL pipeline: `python main.py`
 4. Run unit tests: `pytest tests/test_extraction_qa.py -v`
-5. Launch the QA Dashboard: `streamlit run dashboard.py`
+5. Launch the QA Dashboard: `python -m streamlit run dashboard.py`
