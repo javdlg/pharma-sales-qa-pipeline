@@ -35,11 +35,49 @@ pharma-sales-qa-pipeline/
 │
 ├── data_raw/               # Original raw datasets (not tracked in git)
 ├── data_clean/             # Processed and validated datasets
+├── logs/                   # Directory for logs, rejections CSV, and summary JSON
+├── tests/                  # Directory containing unit tests for quality checks
 ├── extraction_qa.py        # Script for data extraction, unpivot, and QA logging
 ├── sql_load.py             # Script for database load
+├── sql_analytics.sql       # Advanced SQL queries (Market share, MoM growth, date gaps)
+├── main.py                 # Central orchestrator
 ```
 
+## 📖 Data Dictionary & ATC Glossary
+
+The data warehouse uses the **Anatomical Therapeutic Chemical (ATC) Classification System**, which is the global standard for classifying active substances in drugs.
+
+### ATC Code Glossary
+| ATC Code | Drug Group | Real-World Examples |
+| :--- | :--- | :--- |
+| **M01AB** | Anti-inflammatory / Antirheumatic (Non-Steroids) | Diclofenac, Indometacin |
+| **M01AE** | Anti-inflammatory / Antirheumatic (Propionic Acid) | Ibuprofen, Ketoprofen |
+| **N02BA** | Other Analgesics and Antipyretics (Salicylic Acid) | Aspirin |
+| **N02BE** | Other Analgesics and Antipyretics (Anilides) | Paracetamol (Acetaminophen) |
+| **N05B** | Anxiolytics | Diazepam, Alprazolam |
+| **N05C** | Hypnotics and Sedatives | Melatonin, Zolpidem |
+| **R03** | Drugs for Obstructive Airway Diseases | Salbutamol (Inhalers) |
+| **R06** | Antihistamines for Systemic Use | Loratadine, Cetirizine |
+
+### Database Schema (`daily_sales` Table)
+| Column Name | Data Type | Description |
+| :--- | :--- | :--- |
+| `fecha` | TEXT (ISO Date) | Transaction date (Staged as YYYY-MM-DD) |
+| `anio` | INTEGER | Year of transaction |
+| `mes` | INTEGER | Month of transaction (1-12) |
+| `hora` | INTEGER | Hour of transaction (0-23) |
+| `dia_semana` | TEXT | Name of the weekday (e.g., Monday) |
+| `codigo_atc` | TEXT | Standardized ATC category code (Foreign key to master) |
+| `cantidad_vendida` | REAL | Total quantity sold |
+
+## 📊 Advanced SQL Analytics
+
+The [sql_analytics.sql](file:///c:/Users/javie/Documents/practice-projects/pharma-sales-qa-pipeline/sql_analytics.sql) script contains highly-optimized SQL queries to answer critical business and QA questions:
+1. **Market Share & MoM Sales Growth**: Uses Window Functions (`SUM() OVER`, `LAG()`) to compute the monthly market share of each drug category and its Month-over-Month growth rate. This assists in predictive demand forecasting.
+2. **QA Data Completeness (Date Gaps)**: Employs `LEAD()` and SQLite's `julianday()` function to automatically audit consecutive sales dates. It identifies any unrecorded days, exposing regional network drops or POS ingestion failures.
+
 ## How to Run
-- Ensure Python is installed.
+- Ensure Python and dependencies are installed (`pip install pandas numpy pytest`).
 - Place the `salesdaily.csv` file in the `data_raw/` directory.
 - Run the pipeline with `python main.py`.
+- Run tests using `pytest tests/test_extraction_qa.py -v`.
