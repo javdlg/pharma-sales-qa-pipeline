@@ -40,6 +40,7 @@ pharma-sales-qa-pipeline/
 ├── extraction_qa.py        # Script for data extraction, unpivot, and QA logging
 ├── sql_load.py             # Script for database load
 ├── sql_analytics.sql       # Advanced SQL queries (Market share, MoM growth, date gaps)
+├── dashboard.py            # Streamlit interactive QA dashboard
 ├── main.py                 # Central orchestrator
 ```
 
@@ -77,7 +78,8 @@ The [sql_analytics.sql](file:///c:/Users/javie/Documents/practice-projects/pharm
 2. **QA Data Completeness (Date Gaps)**: Employs `LEAD()` and SQLite's `julianday()` function to automatically audit consecutive sales dates. It identifies any unrecorded days, exposing regional network drops or POS ingestion failures.
 
 ## How to Run
-- Ensure Python and dependencies are installed (`pip install pandas numpy pytest`).
-- Place the `salesdaily.csv` file in the `data_raw/` directory.
-- Run the pipeline with `python main.py`.
-- Run tests using `pytest tests/test_extraction_qa.py -v`.
+1. Ensure Python and dependencies are installed (`pip install pandas numpy pytest streamlit plotly`).
+2. Place the `salesdaily.csv` file in the `data_raw/` directory.
+3. Run the ETL pipeline: `python main.py`
+4. Run unit tests: `pytest tests/test_extraction_qa.py -v`
+5. Launch the QA Dashboard: `streamlit run dashboard.py`
