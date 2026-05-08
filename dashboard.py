@@ -45,20 +45,14 @@ st.divider()
 col_left, col_right = st.columns(2)
 
 with col_left:
-    st.subheader("Distribution of Rejection Reasons")
+    st.subheader("Rejection Breakdown")
     if not df_rejections.empty:
-        rejection_counts = df_rejections['rejection_reason'].value_counts().reset_index()
-        rejection_counts.columns = ['Reason', 'Count']
+        st.markdown("##### Frequent Anomalies")
+        rejection_counts = df_rejections['rejection_reason'].value_counts()
         
-        fig = px.pie(
-            rejection_counts, 
-            values='Count', 
-            names='Reason', 
-            hole=0.4,
-            color_discrete_sequence=px.colors.qualitative.Pastel
-        )
-        fig.update_layout(margin=dict(t=0, b=0, l=0, r=0))
-        st.plotly_chart(fig, use_container_width=True)
+        # Display each rejection reason as a classic KPI Card
+        for reason, count in rejection_counts.items():
+            st.metric(label=f"⚠️ {reason}", value=f"{count:,} records")
     else:
         st.info("No rejections found. The dataset was perfectly clean.")
 
